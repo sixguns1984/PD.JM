@@ -1,0 +1,16 @@
+library(ChAMP)
+setwd("/public3/data/lijinxia/JM/QC")
+load("GSetSqFlt3.RData")
+myNorm = getBeta(GSetSqFlt3)
+pd = pData(GSetSqFlt3)
+
+# Check for batch effect
+Batch_check <- champ.SVD(beta = myNorm, rgSet = NULL, pd = pd, RGEffect = FALSE, PDFplot = TRUE, Rplot = TRUE, RESULTSdir = "./CHAMP_SVDimages/")
+
+# Correct batch effect
+mycombat <- champ.runCombat(beta = myNorm, pd = pd, variablename = "Sample_Group", batchname = c("ID_Position"), logitTrans = TRUE)
+
+# Test the perfomance of batch correction
+Batch_check2 <- champ.SVD(beta = mycombat, rgSet = NULL, pd = pd, RGEffect = FALSE, PDFplot = TRUE, Rplot = TRUE, RESULTSdir = "./CHAMP_SVDimages/")
+
+save(mycombat, file = "mycombat.RData")
